@@ -1,4 +1,4 @@
-import { PaginationResult, Result } from 'src/stores/types';
+import { PaginationResult, Result } from 'src/types';
 
 export interface IssueStats {
   status: Record<IssueStatus, number>;
@@ -20,11 +20,11 @@ export interface Issue {
   title: string;
   description: string;
   solution: string;
-  sla: string | Date;
+  sla: string | null;
   unreadCount: number;
   lastMessage: string;
   status: IssueStatus;
-  category: Omit<IssueCategory, 'createdAt' | 'updatedAt'>;
+  category: Omit<IssueCategory, 'createdAt' | 'updatedAt'> | null;
 }
 
 export type IssueResponse = PaginationResult<Issue>;

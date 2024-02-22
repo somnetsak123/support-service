@@ -2,7 +2,12 @@ import { ref } from 'vue';
 import { defineStore } from 'pinia';
 import { api } from 'boot/axios';
 
-import type { IssueStats, IssueResponse, IssueCategoryResponse } from './types';
+import type {
+  IssueStats,
+  IssueStatus,
+  IssueResponse,
+  IssueCategoryResponse,
+} from './types';
 
 export const useIssueStore = defineStore('issue-store', () => {
   const issue = ref<IssueResponse>();
@@ -46,6 +51,21 @@ export const useIssueStore = defineStore('issue-store', () => {
     return false;
   }
 
+  async function editIssue(
+    id: string,
+    data: {
+      title?: string;
+      categoryId?: string | null;
+      solution?: string;
+      sla?: string | null | Date;
+      status?: IssueStatus;
+    },
+  ) {
+    const res = await api.patch(`/api/v1/support/issue/${id}`, data);
+    if (res) return true;
+    return false;
+  }
+
   async function fetchIssueCategory() {
     const res = await api.get<IssueCategoryResponse>(
       '/api/v1/support/issue-category',
@@ -61,10 +81,14 @@ export const useIssueStore = defineStore('issue-store', () => {
     return false;
   }
 
+  const selectedIssueId = ref<string>();
+  const selectedIssueCateId = ref<string>();
+
   return {
     issue,
     fetchIssue,
     createIssue,
+    editIssue,
 
     issueStats,
     fetchIssueStats,
@@ -72,5 +96,8 @@ export const useIssueStore = defineStore('issue-store', () => {
     issueCategory,
     fetchIssueCategory,
     createIssueCategory,
+
+    selectedIssueId,
+    selectedIssueCateId,
   };
 });

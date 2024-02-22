@@ -2,7 +2,7 @@
 import { ref, onMounted } from 'vue';
 import { storeToRefs } from 'pinia';
 import { useIssueStore } from 'src/stores/issue';
-import { getUsername, getEmail } from 'src/services/keycloak';
+import { getName, getEmail } from 'src/services/keycloak';
 
 const issueStore = useIssueStore();
 const { issueCategory } = storeToRefs(issueStore);
@@ -38,6 +38,7 @@ async function onSubmit() {
     })
     .then(() => {
       title.value = description.value = categoryId.value = '';
+      openModal.value = false;
     });
 }
 
@@ -47,7 +48,6 @@ onMounted(async () => {
   await issueStore.fetchIssueCategory();
 
   if (issueCategory.value) {
-    console.log(issueCategory.value);
     options.value = issueCategory.value?.result.map((v) => ({
       label: v.name,
       value: v.id,
@@ -73,7 +73,7 @@ onMounted(async () => {
             color="negative"
           />
         </q-card-section>
-
+        <q-separator />
         <q-card-section>
           <div class="row q-gutter-x-lg">
             <div class="column">
@@ -81,7 +81,7 @@ onMounted(async () => {
               <span>อีเมล</span>
             </div>
             <div class="column">
-              <span>{{ getUsername() }}</span>
+              <span>{{ getName() }}</span>
               <span>{{ getEmail() }}</span>
             </div>
           </div>

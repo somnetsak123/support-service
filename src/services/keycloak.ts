@@ -45,13 +45,7 @@ export function getEmail(): string {
 }
 
 export function getRole(): string[] {
-  const decoded = keycloak.tokenParsed;
-
-  if (decoded && decoded.resource_access && decoded.azp) {
-    return decoded.resource_access[decoded.azp].roles;
-  }
-
-  return [];
+  return keycloak.tokenParsed?.role ?? [];
 }
 
 export function isLoggedIn() {
