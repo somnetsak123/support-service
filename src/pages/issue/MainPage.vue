@@ -2,10 +2,10 @@
 import { ref, onMounted, toRaw } from 'vue';
 import { storeToRefs } from 'pinia';
 import { useIssueStore } from 'src/stores/issue';
-import { Issue } from 'src/stores/issue/types';
+import { Issue } from 'stores/issue/types';
 
-import EditIssueDialog from './EditIssueDialog.vue';
-import CardIssue from 'src/components/issue/CardIssue.vue';
+import IssueCard from 'components/issue/IssueCard.vue';
+import EditIssueDialog from 'components/issue/EditIssueDialog.vue';
 
 const issueStore = useIssueStore();
 const { issueStats, issue } = storeToRefs(issueStore);
@@ -27,13 +27,12 @@ function editIssue(data: Issue) {
 <template>
   <div style="display: flex; flex-direction: column; gap: 1rem">
     <div class="bg-white q-pa-md rounded-borders">
-      <h4 class="q-my-none">สถานะปัจจุบัน</h4>
-      <q-separator class="q-my-lg" />
+      <h5 class="q-mt-none q-mb-md text-weight-bold">สถานะปัจจุบัน</h5>
       <div class="stats-container">
         <div
-          class="stats-card column"
-          :key="key"
           v-for="[key, val] in Object.entries(issueStats?.status || {})"
+          :key="key"
+          class="stats-card column"
         >
           <span
             :id="`stats-card-${key}-count`"
@@ -60,7 +59,11 @@ function editIssue(data: Issue) {
     </div>
 
     <div class="bg-white q-pa-md rounded-borders">
-      <card-issue
+      <h5 class="q-mt-none q-mb-md text-weight-bold bg-white">รายการคำร้อง</h5>
+      <div class="text-center q-my-md" v-if="!issue">
+        <q-spinner-dots color="primary" size="40px" />
+      </div>
+      <issue-card
         v-for="item in issue?.result"
         :key="item.id"
         :data="item"
@@ -78,6 +81,7 @@ function editIssue(data: Issue) {
 
 <style lang="scss" scoped>
 .stats-card {
+  text-align: center;
   border: 1px solid #e1e1e8;
   border-radius: 5px;
   padding-block: 0.25rem;

@@ -50,4 +50,5 @@ defineProps<{
     </q-card>
   </q-dialog>
 </template>
+
 <style lang="scss"></style>

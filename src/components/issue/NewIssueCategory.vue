@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue';
 import { QInput } from 'quasar';
-import { useIssueStore } from 'src/stores/issue';
+import { useIssueStore } from 'stores/issue';
 
 const issueStore = useIssueStore();
 

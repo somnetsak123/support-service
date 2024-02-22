@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref } from 'vue';
-import NewIssue from 'src/pages/user/components/NewIssue.vue';
+import NewIssue from 'components/issue/NewIssue.vue';
 
 const openNewIssue = ref<boolean>(false);
 </script>
@@ -36,7 +36,7 @@ const openNewIssue = ref<boolean>(false);
           <br v-if="$q.screen.gt.md" />
           ทั้งปัจจุบันและที่ผ่านมาของคุณ พร้อมการตอบกลับที่ครบถ้วน
         </span>
-        <q-btn color="primary" icon="check" label="เช็คสถานะ" />
+        <q-btn color="primary" icon="check" label="เช็คสถานะ" to="/issue" />
       </q-card-section>
     </q-card>
   </div>

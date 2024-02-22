@@ -2,10 +2,12 @@
 import { ref, onMounted } from 'vue';
 import { storeToRefs } from 'pinia';
 import { getName, getRole } from 'src/services/keycloak';
-import { useIssueStore } from 'src/stores/issue';
+import { useIssueStore } from 'stores/issue';
 
 const issueStore = useIssueStore();
 const { issueCategory, selectedIssueCateId } = storeToRefs(issueStore);
+const isSearch = ref(false);
+const searchInput = ref('');
 
 onMounted(async () => {
   await issueStore.fetchIssueCategory();
@@ -22,7 +24,12 @@ const leftDrawerOpen = ref(false);
 
 const notiOpen = ref(false);
 const notiMenu = ref<NotificationButton[]>([
-  { item: 'ทั้งหมด', bgColor: 'grey-7', iconColor: 'grey-7', active: false },
+  {
+    item: 'ทั้งหมด',
+    bgColor: 'light-blue-2',
+    iconColor: 'primary',
+    active: true,
+  },
   {
     item: 'ยังไม่ได้อ่าน',
     bgColor: 'grey-7',
@@ -52,35 +59,72 @@ function toggleLeftDrawer() {
         class="text-black justify-between q-py-sm"
         style="background-color: #f3f3f7"
       >
-        <div>
-          <q-btn
-            flat
-            dense
-            round
-            @click="toggleLeftDrawer"
-            size="16px"
-            class="bg-grey-4"
-            aria-label="Menu"
-          >
-            <q-icon name="menu" size="20px" color="grey-7" />
-          </q-btn>
-        </div>
+        <q-btn
+          flat
+          dense
+          round
+          @click="toggleLeftDrawer"
+          size="16px"
+          class="bg-grey-4"
+          aria-label="Menu"
+        >
+          <q-icon name="menu" size="20px" color="grey-7" />
+        </q-btn>
 
-        <div class="q-gutter-x-md">
+        <div class="row items-center q-gutter-x-md">
           <!-- Search -->
-          <q-btn round dense flat no-caps size="16px" class="bg-grey-4">
-            <q-icon name="mdi-magnify" size="20px" color="grey-7" />
-          </q-btn>
+          <div align="right">
+            <q-btn
+              v-if="!isSearch"
+              round
+              dense
+              flat
+              no-caps
+              size="16px"
+              class="bg-grey-4"
+              @click="isSearch = !isSearch"
+            >
+              <q-icon name="mdi-magnify" size="20px" color="grey-7" />
+            </q-btn>
+            <q-input
+              v-else
+              rounded
+              hide-bottom-space
+              dense
+              placeholder="ค้นหา"
+              standout="bg-white"
+              input-class="text-grey-7"
+              v-model="searchInput"
+            >
+              <template v-slot:prepend>
+                <q-icon name="mdi-magnify" size="20px" color="grey-7" />
+              </template>
+              <template v-slot:append>
+                <q-icon
+                  name="close"
+                  size="20px"
+                  color="grey-7"
+                  @click="
+                    () => {
+                      searchInput = '';
+                      isSearch = false;
+                    }
+                  "
+                  class="cursor-pointer"
+                />
+              </template>
+            </q-input>
+          </div>
 
           <!-- Notification -->
           <q-btn
             round
             dense
-            no-caps
             flat
+            no-caps
+            class="q-mr-md"
             size="16px"
             :class="notiOpen ? 'bg-light-blue-2' : 'bg-grey-4'"
-            class="q-mr-md"
             @click="notiOpen = !notiOpen"
           >
             <q-icon
@@ -104,7 +148,7 @@ function toggleLeftDrawer() {
                 </div>
                 <q-space />
               </div>
-              <div class="q-px-md q-gutter-x-md">
+              <div class="q-px-md q-pb-md q-gutter-x-md">
                 <q-btn
                   rounded
                   padding="0px 10px"
@@ -120,14 +164,13 @@ function toggleLeftDrawer() {
                 />
               </div>
               <q-infinite-scroll :offset="250">
-                <div class="caption">
+                <div class="caption cursor-pointer">
                   <q-item v-ripple dense class="q-py-sm col-12">
-                    <q-avatar color="positive">
-                      <q-icon
-                        color="white"
-                        name="mdi-check"
-                        style="height: 20px; max-width: 20px"
-                      />
+                    <q-avatar
+                      color="positive"
+                      style="height: 30px; width: 30px"
+                    >
+                      <q-icon color="white" name="mdi-check" />
                     </q-avatar>
 
                     <div class="col-6 column text-caption q-pl-md">
@@ -140,14 +183,10 @@ function toggleLeftDrawer() {
                   </q-item>
                 </div>
 
-                <div class="caption">
+                <div class="caption cursor-pointer">
                   <q-item v-ripple dense class="q-py-sm col-12">
-                    <q-avatar color="teal-3">
-                      <q-icon
-                        color="white"
-                        name="mdi-check"
-                        style="height: 20px; max-width: 20px"
-                      />
+                    <q-avatar color="teal-3" style="height: 30px; width: 30px">
+                      <q-icon color="white" name="mdi-check" />
                     </q-avatar>
 
                     <div class="col-6 column text-caption q-pl-md">
@@ -239,10 +278,11 @@ function toggleLeftDrawer() {
       <div class="main-bar">
         <q-list class="q-pt-xl">
           <q-expansion-item
-            class="text-weight-bold"
-            label="คำร้อง"
-            icon="mdi-package-variant"
             @click="() => {}"
+            class="text-weight-bold"
+            label="คำร้องทั้งหมด"
+            icon="mdi-package-variant"
+            to="/issue"
             hide-expand-icon
           />
           <q-expansion-item
@@ -253,9 +293,24 @@ function toggleLeftDrawer() {
             <q-expansion-item
               v-for="item in issueCategory?.result"
               :key="item.id"
-              :header-inset-level="0.3"
+              :header-inset-level="0.5"
               :label="item.name"
               @click="() => (selectedIssueCateId = item.id)"
+              class="text-weight-medium"
+              hide-expand-icon
+              dense
+            />
+          </q-expansion-item>
+
+          <q-expansion-item
+            class="text-weight-bold"
+            label="การจัดการ"
+            icon="mdi-package-variant"
+          >
+            <q-expansion-item
+              :header-inset-level="0.5"
+              label="จัดการประเภทคำร้อง"
+              to="/issue/category"
               class="text-weight-medium"
               hide-expand-icon
               dense

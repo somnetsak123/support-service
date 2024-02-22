@@ -55,6 +55,7 @@ export const useIssueStore = defineStore('issue-store', () => {
     id: string,
     data: {
       title?: string;
+      description?: string;
       categoryId?: string | null;
       solution?: string;
       sla?: string | null | Date;

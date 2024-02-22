@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import moment from 'moment';
 import { Issue } from 'src/stores/issue/types';
-import { thaiDate } from 'src/utils/datetime';
+import { dateFormat } from 'src/utils/datetime';
 
 defineProps<{ data: Issue }>();
 defineEmits<{ edit: [data: Issue] }>();
@@ -51,8 +51,8 @@ defineEmits<{ edit: [data: Issue] }>();
               data.sla && new Date(data.sla).getTime() > Date.now()
                 ? `กำหนดการแก้ไขใน${moment(data.sla).fromNow()}`
                 : data.sla
-                  ? `แก้ไขเมื่อ ${thaiDate(data.sla, false, true)}`
-                  : 'ไม่กำหนด'
+                  ? `แก้ไขเมื่อ ${dateFormat(data.sla, false, true)}`
+                  : 'ไม่มีกำหนดแก้ไข'
             }}
           </div>
         </div>
@@ -61,7 +61,7 @@ defineEmits<{ edit: [data: Issue] }>();
   </q-card>
 </template>
 
-<style scoped>
+<style scoped lang="scss">
 .card {
   cursor: pointer;
 }

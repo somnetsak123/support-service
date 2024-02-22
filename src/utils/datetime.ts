@@ -1,18 +1,18 @@
 import 'moment/dist/locale/th';
 import moment from 'moment';
 
-export function thaiDate(
+moment.locale('th');
+
+export function dateFormat(
   date?: string | Date | null,
   fullmonth = false,
   time = false,
 ) {
-  moment.locale('th');
   const m = moment(date);
 
   if (!m.isValid()) return null;
 
-  const year = m.year() + 543;
   const month = m.format(fullmonth ? 'MMMM' : 'MMM');
 
-  return m.format(`DD ${month} ${year} ${time ? 'hh:mm น.' : ''}`);
+  return m.format(`DD ${month} YYYY ${time ? 'hh:mm น.' : ''}`);
 }
